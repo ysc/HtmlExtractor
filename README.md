@@ -1,3 +1,5 @@
 HtmlExtractor是一个Java实现的基于模板的网页结构化信息精准抽取组件，本身并不包含爬虫功能，但可被爬虫或其他程序调用以便更精准地对网页结构化信息进行抽取。
 
 HtmlExtractor是为大规模分布式环境设计的，采用主从架构，主节点负责维护抽取规则，从节点向主节点请求抽取规则，当抽取规则发生变化，主节点主动通知从节点，从而能实现抽取规则变化之后的实时动态生效。
+
+HtmlExtractor项目打成Jar包后运行在从节点上，而运行在主节点上的War包则是另外一个项目：[HtmlExtractorServer](https://github.com/ysc/HtmlExtractorServer)
