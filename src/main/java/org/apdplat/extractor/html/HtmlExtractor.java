@@ -264,7 +264,7 @@ public class HtmlExtractor {
      * @param args
      */
     public static void main(String[] args) {
-        String allExtractRegularUrl = "http://localhost:8080/ExtractRegularServer/api/all_extract_regular.jsp";
+        String allExtractRegularUrl = "http://localhost:8080/HtmlExtractorServer/api/all_extract_regular.jsp";
         String redisHost = "localhost";
         int redisPort = 6379;
 

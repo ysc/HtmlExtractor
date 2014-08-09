@@ -377,7 +377,7 @@ public class ExtractRegular {
     }
 
     public static void main(String[] args) throws Exception {
-        ExtractRegular extractRegular = ExtractRegular.getInstance("http://localhost:8080/ExtractRegularServer/api/all_extract_regular.jsp", null, -1);
+        ExtractRegular extractRegular = ExtractRegular.getInstance("http://localhost:8080/HtmlExtractorServer/api/all_extract_regular.jsp", null, -1);
 
         List<HtmlTemplate> pageTemplates = extractRegular.getHtmlTemplate("http://money.163.com/14/0529/19/9TEGPK5T00252G50.html");
         for (HtmlTemplate pageTemplate : pageTemplates) {
