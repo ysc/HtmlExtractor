@@ -267,14 +267,20 @@ public class HtmlExtractor {
         String allExtractRegularUrl = "http://localhost:8080/HtmlExtractorServer/api/all_extract_regular.jsp";
         String redisHost = "localhost";
         int redisPort = 6379;
+        
+        HtmlExtractor htmlExtractor = HtmlExtractor.getInstance(allExtractRegularUrl, redisHost, redisPort);
 
         String url = "http://money.163.com/08/1219/16/4THR2TMP002533QK.html";
-        List<ExtractResult> extractResults = HtmlExtractor.getInstance(allExtractRegularUrl, redisHost, redisPort).extract(url, "gb2312");
+        List<ExtractResult> extractResults = htmlExtractor.extract(url, "gb2312");
 
-        System.out.println("抽取结果:");
         int i = 1;
         for (ExtractResult extractResult : extractResults) {
-            System.out.println((i++) + "、" + extractResult + "\n");
+            System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
+            for(ExtractResultItem extractResultItem : extractResult.getExtractResultItems()){
+                System.out.print("\t"+extractResultItem.getField()+" = "+extractResultItem.getValue());              
+            }
+            System.out.println("\tdescription = "+extractResult.getDescription());
+            System.out.println("\tkeywords = "+extractResult.getKeywords());
         }
     }
 }
