@@ -6,23 +6,21 @@ HtmlExtractor项目打成Jar包后运行在从节点上，而运行在主节点�
 
 如何使用：
 
-    1、运行主节点，负责维护抽取规则：
+1、运行主节点，负责维护抽取规则：
 
     将项目https://github.com/ysc/HtmlExtractorServer打成War包然后部署到Tomcat
 
-    2、获取一个HtmlExtractor的实例（从节点），示例代码如下：
+2、获取一个HtmlExtractor的实例（从节点），示例代码如下：
 
     String allExtractRegularUrl = "http://localhost:8080/HtmlExtractorServer/api/all_extract_regular.jsp";
     String redisHost = "localhost";
     int redisPort = 6379;
     HtmlExtractor htmlExtractor = HtmlExtractor.getInstance(allExtractRegularUrl, redisHost, redisPort);
 
-    3、抽取信息，示例代码如下：
+3、抽取信息，示例代码如下：
 
     String url = "http://money.163.com/08/1219/16/4THR2TMP002533QK.html";
     List<ExtractResult> extractResults = htmlExtractor.extract(url, "gb2312");
-
-    4、使用信息，示例代码如下：
 
     int i = 1;
     for (ExtractResult extractResult : extractResults) {
