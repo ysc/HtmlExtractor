@@ -48,7 +48,7 @@ public class UrlPattern {
     /**
      * 多个网页模板
      */
-    private List<HtmlTemplate> pageTemplates = new ArrayList<>();
+    private List<HtmlTemplate> htmlTemplates = new ArrayList<>();
 
     public String getUrlPattern() {
         return urlPattern;
@@ -67,23 +67,23 @@ public class UrlPattern {
         return regexPattern;
     }
 
-    public List<HtmlTemplate> getPageTemplates() {
-        return pageTemplates;
+    public List<HtmlTemplate> getHtmlTemplates() {
+        return htmlTemplates;
     }
 
-    public void setPageTemplates(List<HtmlTemplate> pageTemplates) {
-        this.pageTemplates = pageTemplates;
-        for (HtmlTemplate pageTemplate : this.pageTemplates) {
-            pageTemplate.setUrlPattern(this);
+    public void setHtmlTemplates(List<HtmlTemplate> htmlTemplates) {
+        this.htmlTemplates = htmlTemplates;
+        for (HtmlTemplate htmlTemplate : this.htmlTemplates) {
+            htmlTemplate.setUrlPattern(this);
         }
     }
 
-    public boolean hasPageTemplate() {
-        return !pageTemplates.isEmpty();
+    public boolean hasHtmlTemplate() {
+        return !htmlTemplates.isEmpty();
     }
 
-    public void addPageTemplate(HtmlTemplate pageTemplate) {
-        pageTemplates.add(pageTemplate);
-        pageTemplate.setUrlPattern(this);
+    public void addHtmlTemplate(HtmlTemplate htmlTemplate) {
+        htmlTemplates.add(htmlTemplate);
+        htmlTemplate.setUrlPattern(this);
     }
 }
