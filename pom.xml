@@ -123,6 +123,10 @@
         <slf4j-api.version>1.6.4</slf4j-api.version>
         <logback-classic.version>0.9.28</logback-classic.version>
         <jedis.version>2.5.1</jedis.version>
+        <jsoup.version>1.7.2</jsoup.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <jackson.version>1.9.13</jackson.version>
+        <commons-httpclient.version>3.1</commons-httpclient.version>
     </properties>
 
     <dependencies>
@@ -156,6 +160,26 @@
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>${jedis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>${commons-httpclient.version}</version>
         </dependency>
     </dependencies>
 </project>
