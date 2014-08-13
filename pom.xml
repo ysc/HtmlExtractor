@@ -54,16 +54,13 @@
                     <debug>true</debug>
                 </configuration>
             </plugin>
-            <!-- 打包插件，排除语料库和语料库工具以及日志配置文件 -->
+            <!-- 打包插件，排除日志配置文件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${maven-jar-plugin.version}</version>
                 <configuration>
-                    <excludes>
-                        <exclude>**/org/apdplat/word/corpus/Corpus*</exclude>                        
-                        <exclude>**/corpus/corpora.zip</exclude>
-                        <exclude>**/corpus</exclude>                        
+                    <excludes>                  
                         <exclude>**/logback.xml</exclude>
                     </excludes>
                 </configuration>
