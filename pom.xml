@@ -150,7 +150,7 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <!-- redis客户端库 -->
         <dependency>

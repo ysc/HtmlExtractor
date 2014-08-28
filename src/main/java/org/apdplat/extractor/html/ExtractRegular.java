@@ -67,7 +67,24 @@ public class ExtractRegular {
      */
     private ExtractRegular() {
     }
-
+    /**
+     * 获取抽取规则实例
+     * @param urlPatterns url模式列表
+     * @return 抽取规则实例
+     */
+    public static ExtractRegular getInstance(List<UrlPattern> urlPatterns){
+        if (extractRegular != null) {
+            return extractRegular;
+        }
+        synchronized (ExtractRegular.class) {
+            if (extractRegular == null) {
+                extractRegular = new ExtractRegular();
+                //初始化抽取规则
+                extractRegular.init(urlPatterns);
+            }
+        }
+        return extractRegular;
+    }
     /**
      * 获取抽取规则实例
      *
@@ -96,15 +113,29 @@ public class ExtractRegular {
      * 初始化： 
      * 1、从配置管理web服务器获取完整的抽取规则的json表示 
      * 2、抽取json，构造对应的java对象结构 
-     * 3、构造抽取规则查找结构
+     * 
+     * @param serverUrl 配置管理WEB服务器的抽取规则下载地址
      */
     private synchronized void init(String serverUrl) {
-        LOGGER.info("开始初始化URL抽取规则");
+        LOGGER.info("开始下载URL抽取规则");
         LOGGER.info("serverUrl: " + serverUrl);
         //从配置管理web服务器获取完整的抽取规则
         String json = downJson(serverUrl);
+        LOGGER.info("完成下载URL抽取规则");
         //抽取规则
+        LOGGER.info("开始解析URL抽取规则");
         List<UrlPattern> urlPatterns = parseJson(json);
+        LOGGER.info("完成解析URL抽取规则");
+        init(urlPatterns);
+    }
+    /**
+     * 初始化：
+     * 构造抽取规则查找结构
+     * 
+     * @param urlPatterns url模式列表
+     */
+    private synchronized void init(List<UrlPattern> urlPatterns) {
+        LOGGER.info("开始初始化URL抽取规则");
         //构造抽取规则查找结构
         Map<String, List<UrlPattern>> newUrlPatterns = toMap(urlPatterns);
         if (!newUrlPatterns.isEmpty()) {
@@ -325,7 +356,42 @@ public class ExtractRegular {
         }
         return map;
     }
-
+    /**
+     * 动态增加URL模式
+     * @param urlPatterns URL模式列表
+     */
+    public void addUrlPatterns(List<UrlPattern> urlPatterns){
+        for(UrlPattern urlPattern : urlPatterns){
+            addUrlPattern(urlPattern);
+        }
+    }
+    /**
+     * 动态增加URL模式
+     * @param urlPattern URL模式
+     */
+    public void addUrlPattern(UrlPattern urlPattern){
+        try {
+            URL url = new URL(urlPattern.getUrlPattern());
+            String key = urlPrefix(url);
+            List<UrlPattern> value = urlPatternMap.get(key);
+            if (value == null) {
+                value = new ArrayList<>();
+                urlPatternMap.put(key, value);
+            }
+            value.add(urlPattern);
+        } catch (Exception e) {
+            LOGGER.error("URL规则添加失败：" + urlPattern.getUrlPattern(), e);
+        }
+    }
+    public void removeUrlPattern(String urlPattern){
+        try{
+            URL url = new URL(urlPattern);
+            String key = urlPrefix(url);
+            urlPatternMap.remove(key);
+        } catch (Exception e) {
+            LOGGER.error("URL规则删除失败：" + urlPattern, e);
+        }
+    }
     /**
      * 获取一个url的前缀表示，用于快速定位URL模式 
      * 规则为： 

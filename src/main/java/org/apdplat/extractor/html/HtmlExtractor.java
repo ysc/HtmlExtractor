@@ -38,6 +38,7 @@ import org.apdplat.extractor.html.model.ExtractFunction;
 import org.apdplat.extractor.html.model.ExtractResult;
 import org.apdplat.extractor.html.model.ExtractResultItem;
 import org.apdplat.extractor.html.model.HtmlTemplate;
+import org.apdplat.extractor.html.model.UrlPattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -58,6 +59,23 @@ public class HtmlExtractor {
     private ExtractRegular extractRegular;
 
     private HtmlExtractor() {
+    }
+    /**
+     * 获取实例
+     * @param extractRegular URL抽取规则
+     * @return 
+     */
+    public static HtmlExtractor getInstance(ExtractRegular extractRegular) {
+        if (htmlExtractor != null) {
+            return htmlExtractor;
+        }
+        synchronized (HtmlExtractor.class) {
+            if (htmlExtractor == null) {
+                htmlExtractor = new HtmlExtractor();
+                htmlExtractor.extractRegular = extractRegular;
+            }
+        }
+        return htmlExtractor;
     }
     /**
      * 获取实例
@@ -259,11 +277,7 @@ public class HtmlExtractor {
         }
         return extractResult;
     }
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
+    private static void usage2(){
         String allExtractRegularUrl = "http://localhost:8080/HtmlExtractorServer/api/all_extract_regular.jsp";
         String redisHost = "localhost";
         int redisPort = 6379;
@@ -282,5 +296,62 @@ public class HtmlExtractor {
             System.out.println("\tdescription = "+extractResult.getDescription());
             System.out.println("\tkeywords = "+extractResult.getKeywords());
         }
+    }
+    private static void usage1(){
+        //1、构造抽取规则
+        List<UrlPattern> urlPatterns = new ArrayList<>();
+        //1.1、构造URL模式
+        UrlPattern urlPattern = new UrlPattern();
+        urlPattern.setUrlPattern("http://money.163.com/\\d{2}/\\d{4}/\\d{2}/[0-9A-Z]{16}.html");
+        //1.2、构造HTML模板
+        HtmlTemplate htmlTemplate = new HtmlTemplate();
+        htmlTemplate.setTemplateName("网易财经频道");
+        htmlTemplate.setTableName("finance");
+        //1.3、将URL模式和HTML模板建立关联
+        urlPattern.addHtmlTemplate(htmlTemplate);
+        //1.4、构造CSS路径
+        CssPath cssPath = new CssPath();
+        cssPath.setCssPath("h1");
+        cssPath.setFieldName("title");
+        cssPath.setFieldDescription("标题");
+        //1.5、将CSS路径和模板建立关联
+        htmlTemplate.addCssPath(cssPath);
+        //1.6、构造CSS路径
+        cssPath = new CssPath();
+        cssPath.setCssPath("div#endText");
+        cssPath.setFieldName("content");
+        cssPath.setFieldDescription("正文");
+        //1.6、将CSS路径和模板建立关联
+        htmlTemplate.addCssPath(cssPath);
+        //可象上面那样构造多个URLURL模式
+        urlPatterns.add(urlPattern);
+        //2、获取抽取规则对象
+        ExtractRegular extractRegular = ExtractRegular.getInstance(urlPatterns);
+        //注意：可通过如下3个方法动态地改变抽取规则
+        //extractRegular.addUrlPatterns(urlPatterns);
+        //extractRegular.addUrlPattern(urlPattern);
+        //extractRegular.removeUrlPattern(urlPattern.getUrlPattern());
+        //3、获取HTML抽取工具
+        HtmlExtractor htmlExtractor = HtmlExtractor.getInstance(extractRegular);
+        //4、抽取网页
+        String url = "http://money.163.com/08/1219/16/4THR2TMP002533QK.html";
+        List<ExtractResult> extractResults = htmlExtractor.extract(url, "gb2312");
+        //5、输出结果
+        int i = 1;
+        for (ExtractResult extractResult : extractResults) {
+            System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
+            for(ExtractResultItem extractResultItem : extractResult.getExtractResultItems()){
+                System.out.print("\t"+extractResultItem.getField()+" = "+extractResultItem.getValue());              
+            }
+            System.out.println("\tdescription = "+extractResult.getDescription());
+            System.out.println("\tkeywords = "+extractResult.getKeywords());
+        }
+    }
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        usage1();
+        //usage2();
     }
 }
