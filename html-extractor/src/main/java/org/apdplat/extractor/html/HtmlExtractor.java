@@ -352,6 +352,6 @@ public class HtmlExtractor {
      */
     public static void main(String[] args) {
         usage1();
-        //usage2();
+        usage2();
     }
 }
