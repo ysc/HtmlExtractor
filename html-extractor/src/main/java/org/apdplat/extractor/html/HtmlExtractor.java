@@ -278,7 +278,7 @@ public class HtmlExtractor {
         return extractResult;
     }
     private static void usage2(){
-        String allExtractRegularUrl = "http://localhost:8080/HtmlExtractorServer/api/all_extract_regular.jsp";
+        String allExtractRegularUrl = "http://localhost:8080/html-extractor-web/api/all_extract_regular.jsp";
         String redisHost = "localhost";
         int redisPort = 6379;
         
@@ -352,6 +352,6 @@ public class HtmlExtractor {
      */
     public static void main(String[] args) {
         usage1();
-        usage2();
+        //usage2();
     }
 }
