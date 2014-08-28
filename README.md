@@ -4,14 +4,15 @@
 
 ##如何使用？
 
-	HtmlExtractor由2个子项目构成，html-extractor和html-extractor-web。
-	html-extractor实现了数据抽取逻辑，是从节点，html-extractor-web提供web界面来维护抽取规则，是主节点。
-	html-extractor是一个jar包，可通过maven引用：
-	<dependency>
-	    <groupId>org.apdplat</groupId>
-	    <artifactId>html-extractor</artifactId>
-	    <version>1.0</version>
-	</dependency>
+    HtmlExtractor由2个子项目构成，html-extractor和html-extractor-web。
+    html-extractor实现了数据抽取逻辑，是从节点，html-extractor-web提供web界面来维护抽取规则，是主节点。
+    html-extractor是一个jar包，可通过maven引用：
+    <dependency>
+        <groupId>org.apdplat</groupId>
+        <artifactId>html-extractor</artifactId>
+        <version>1.0</version>
+    </dependency>
+    html-extractor-web是一个war包，需要部署到Servlet/Jsp容器上。
 
 ##单机集中式使用方法：
 
@@ -73,7 +74,7 @@
 
     1、运行主节点，负责维护抽取规则：
 
-    将项目https://github.com/ysc/HtmlExtractorServer打成War包然后部署到Tomcat
+    将子项目html-extractor-web打成War包然后部署到Tomcat。
 
     2、获取一个HtmlExtractor的实例（从节点），示例代码如下：
 
