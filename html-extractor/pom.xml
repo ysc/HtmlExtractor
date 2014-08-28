@@ -83,6 +83,20 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+            <!-- javadoc插件,打包api -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-docs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- source插件,打包源码 -->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
@@ -113,6 +127,7 @@
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
         <maven-surefire-plugin.version>2.14</maven-surefire-plugin.version>
         <maven-resources-plugin.version>2.6</maven-resources-plugin.version>
+        <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
         <maven-source-plugin.version>2.2.1</maven-source-plugin.version>
         <sonar-maven3-plugin.version>3.5</sonar-maven3-plugin.version>
         
