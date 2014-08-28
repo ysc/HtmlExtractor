@@ -321,7 +321,7 @@ public class HtmlExtractor {
         cssPath.setCssPath("div#endText");
         cssPath.setFieldName("content");
         cssPath.setFieldDescription("正文");
-        //1.6、将CSS路径和模板建立关联
+        //1.7、将CSS路径和模板建立关联
         htmlTemplate.addCssPath(cssPath);
         //可象上面那样构造多个URLURL模式
         urlPatterns.add(urlPattern);
