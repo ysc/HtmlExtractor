@@ -221,7 +221,14 @@ public class HtmlExtractor {
             // 如果CSS路径匹配多个元素，则每个元素对应的文本为一行
             //所以在定义CSS路径的时候一定要注意
             for (Element element : elements) {
-                String text = element.text();
+                String text = null;
+                if(StringUtils.isBlank(cssPath.getAttr())){
+                    //提取文本
+                    text = element.text();
+                }else{
+                    //提取属性
+                    text = element.attr(cssPath.getAttr());
+                }
                 if (StringUtils.isNotBlank(text)) {
                     str.append(text).append("\n");
                 }

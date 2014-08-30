@@ -42,6 +42,10 @@ public class CssPath {
      */
     private String cssPath;
     /**
+     * 提取属性，如果不指定属性，则提取文本
+     */
+    private String attr;
+    /**
      * CSS路径对应的抽取函数列表
      */
     private List<ExtractFunction> extractFunctions = new ArrayList<>();
@@ -68,6 +72,14 @@ public class CssPath {
 
     public void setCssPath(String cssPath) {
         this.cssPath = cssPath;
+    }
+
+    public String getAttr() {
+        return attr;
+    }
+
+    public void setAttr(String attr) {
+        this.attr = attr;
     }
 
     public List<ExtractFunction> getExtractFunctions() {
