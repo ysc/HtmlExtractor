@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -216,10 +217,8 @@ public class HtmlExtractor {
         //只要有一个CSS路径或抽取表达式失败，就是抽取失败
         for (CssPath cssPath : cssPaths) {
             // 抽取一条CSS PATH
-            StringBuilder str = new StringBuilder();
             Elements elements = doc.select(cssPath.getCssPath());
-            // 如果CSS路径匹配多个元素，则每个元素对应的文本为一行
-            //所以在定义CSS路径的时候一定要注意
+            // 如果CSS路径匹配多个元素，则抽取字段为多值
             for (Element element : elements) {
                 String text = null;
                 if(StringUtils.isBlank(cssPath.getAttr())){
@@ -230,56 +229,57 @@ public class HtmlExtractor {
                     text = element.attr(cssPath.getAttr());
                 }
                 if (StringUtils.isNotBlank(text)) {
-                    str.append(text).append("\n");
-                }
-            }
-            if (str.length() > 0) {
-                // 成功提取文本
-                if (cssPath.hasExtractFunction()) {
-                    //使用CSS路径下的抽取函数做进一步抽取
-                    for (ExtractFunction pf : cssPath.getExtractFunctions()) {
-                        String text = ExtractFunctionExecutor.execute(str.toString(), doc, cssPath, pf.getExtractExpression());
-                        if (text != null) {
-                            ExtractResultItem extractResultItem = new ExtractResultItem();
-                            extractResultItem.setField(pf.getFieldName());
-                            extractResultItem.setValue(text);
-                            extractResult.addExtractResultItem(extractResultItem);
-                        } else {
-                            ExtractFailLog extractFailLog = new ExtractFailLog();
-                            extractFailLog.setUrl(url);
-                            extractFailLog.setUrlPattern(htmlTemplate.getUrlPattern().getUrlPattern());
-                            extractFailLog.setTemplateName(htmlTemplate.getTemplateName());
-                            extractFailLog.setCssPath(cssPath.getCssPath());
-                            extractFailLog.setExtractExpression(pf.getExtractExpression());
-                            extractFailLog.setTableName(htmlTemplate.getTableName());
-                            extractFailLog.setFieldName(pf.getFieldName());
-                            extractFailLog.setFieldDescription(pf.getFieldDescription());
-                            extractResult.addExtractFailLog(extractFailLog);
-                            //未抽取到结果，保存抽取失败日志并停止抽取，抽取失败
-                            return extractResult;
+                    // 成功提取文本
+                    if (cssPath.hasExtractFunction()) {
+                        //使用CSS路径下的抽取函数做进一步抽取
+                        for (ExtractFunction pf : cssPath.getExtractFunctions()) {
+                            text = ExtractFunctionExecutor.execute(text, doc, cssPath, pf.getExtractExpression());
+                            if (text != null) {
+                                ExtractResultItem extractResultItem = new ExtractResultItem();
+                                extractResultItem.setField(pf.getFieldName());
+                                extractResultItem.setValue(text);
+                                extractResult.addExtractResultItem(extractResultItem);
+                            } else {
+                                ExtractFailLog extractFailLog = new ExtractFailLog();
+                                extractFailLog.setUrl(url);
+                                extractFailLog.setUrlPattern(htmlTemplate.getUrlPattern().getUrlPattern());
+                                extractFailLog.setTemplateName(htmlTemplate.getTemplateName());
+                                extractFailLog.setCssPath(cssPath.getCssPath());
+                                extractFailLog.setExtractExpression(pf.getExtractExpression());
+                                extractFailLog.setTableName(htmlTemplate.getTableName());
+                                extractFailLog.setFieldName(pf.getFieldName());
+                                extractFailLog.setFieldDescription(pf.getFieldDescription());
+                                extractResult.addExtractFailLog(extractFailLog);
+                                //未抽取到结果，保存抽取失败日志并停止抽取，抽取失败
+                                //快速失败模式
+                                //如果要记录所有失败日志，则去除下面一行返回的代码
+                                return extractResult;
+                            }
                         }
+                    } else {
+                        //使用CSS路径抽取的结果
+                        ExtractResultItem extractResultItem = new ExtractResultItem();
+                        extractResultItem.setField(cssPath.getFieldName());
+                        extractResultItem.setValue(text);
+                        extractResult.addExtractResultItem(extractResultItem);
                     }
                 } else {
-                    //使用CSS路径抽取的结果
-                    ExtractResultItem extractResultItem = new ExtractResultItem();
-                    extractResultItem.setField(cssPath.getFieldName());
-                    extractResultItem.setValue(str.toString());
-                    extractResult.addExtractResultItem(extractResultItem);
+                    //未抽取到结果，保存抽取失败日志并停止抽取，抽取失败
+                    ExtractFailLog extractFailLog = new ExtractFailLog();
+                    extractFailLog.setUrl(url);
+                    extractFailLog.setUrlPattern(htmlTemplate.getUrlPattern().getUrlPattern());
+                    extractFailLog.setTemplateName(htmlTemplate.getTemplateName());
+                    extractFailLog.setCssPath(cssPath.getCssPath());
+                    extractFailLog.setExtractExpression("");
+                    extractFailLog.setTableName(htmlTemplate.getTableName());
+                    extractFailLog.setFieldName(cssPath.getFieldName());
+                    extractFailLog.setFieldDescription(cssPath.getFieldDescription());
+                    extractResult.addExtractFailLog(extractFailLog);
+                    //未抽取到结果，保存抽取失败日志并停止抽取，抽取失败
+                    //快速失败模式
+                    //如果要记录所有失败日志，则去除下面一行返回的代码
+                    return extractResult;
                 }
-            } else {
-                //未抽取到结果，保存抽取失败日志并停止抽取，抽取失败
-                ExtractFailLog extractFailLog = new ExtractFailLog();
-                extractFailLog.setUrl(url);
-                extractFailLog.setUrlPattern(htmlTemplate.getUrlPattern().getUrlPattern());
-                extractFailLog.setTemplateName(htmlTemplate.getTemplateName());
-                extractFailLog.setCssPath(cssPath.getCssPath());
-                extractFailLog.setExtractExpression("");
-                extractFailLog.setTableName(htmlTemplate.getTableName());
-                extractFailLog.setFieldName(cssPath.getFieldName());
-                extractFailLog.setFieldDescription(cssPath.getFieldDescription());
-                extractResult.addExtractFailLog(extractFailLog);
-                //未抽取到结果，保存抽取失败日志并停止抽取，抽取失败
-                return extractResult;
             }
         }
         return extractResult;
@@ -297,8 +297,18 @@ public class HtmlExtractor {
         int i = 1;
         for (ExtractResult extractResult : extractResults) {
             System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
-            for(ExtractResultItem extractResultItem : extractResult.getExtractResultItems()){
-                System.out.print("\t"+extractResultItem.getField()+" = "+extractResultItem.getValue());              
+            Map<String, List<ExtractResultItem>> extractResultItems = extractResult.getExtractResultItems();
+            for(String field : extractResultItems.keySet()){
+                List<ExtractResultItem> values = extractResultItems.get(field);
+                if(values.size() > 1){
+                    int j=1;
+                    System.out.println("\t多值字段:"+field);
+                    for(ExtractResultItem item : values){
+                        System.out.println("\t\t"+(j++)+"、"+field+" = "+item.getValue());   
+                    }
+                }else{
+                    System.out.println("\t"+field+" = "+values.get(0).getValue());     
+                }
             }
             System.out.println("\tdescription = "+extractResult.getDescription());
             System.out.println("\tkeywords = "+extractResult.getKeywords());
@@ -347,8 +357,86 @@ public class HtmlExtractor {
         int i = 1;
         for (ExtractResult extractResult : extractResults) {
             System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
-            for(ExtractResultItem extractResultItem : extractResult.getExtractResultItems()){
-                System.out.print("\t"+extractResultItem.getField()+" = "+extractResultItem.getValue());              
+            Map<String, List<ExtractResultItem>> extractResultItems = extractResult.getExtractResultItems();
+            for(String field : extractResultItems.keySet()){
+                List<ExtractResultItem> values = extractResultItems.get(field);
+                if(values.size() > 1){
+                    int j=1;
+                    System.out.println("\t多值字段:"+field);
+                    for(ExtractResultItem item : values){
+                        System.out.println("\t\t"+(j++)+"、"+field+" = "+item.getValue());   
+                    }
+                }else{
+                    System.out.println("\t"+field+" = "+values.get(0).getValue());     
+                }
+            }
+            System.out.println("\tdescription = "+extractResult.getDescription());
+            System.out.println("\tkeywords = "+extractResult.getKeywords());
+        }
+    }
+    private static void usage3(){
+        //1、构造抽取规则
+        List<UrlPattern> urlPatterns = new ArrayList<>();
+        //1.1、构造URL模式
+        UrlPattern urlPattern = new UrlPattern();
+        urlPattern.setUrlPattern("http://list.jd.com/list.html\\?cat=([\\d,]+)");
+        //1.2、构造HTML模板
+        HtmlTemplate htmlTemplate = new HtmlTemplate();
+        htmlTemplate.setTemplateName("京东商品");
+        htmlTemplate.setTableName("jd_goods");
+        //1.3、将URL模式和HTML模板建立关联
+        urlPattern.addHtmlTemplate(htmlTemplate);
+        //1.4、构造CSS路径
+        CssPath cssPath = new CssPath();
+        cssPath.setCssPath("html body div div div ul li div div.p-name");
+        cssPath.setFieldName("name");
+        cssPath.setFieldDescription("名称");
+        //1.5、将CSS路径和模板建立关联
+        htmlTemplate.addCssPath(cssPath);
+        //1.6、构造CSS路径
+        cssPath = new CssPath();
+        cssPath.setCssPath("html body div div div ul li div div.p-name a");
+        cssPath.setAttr("href");
+        cssPath.setFieldName("link");
+        cssPath.setFieldDescription("链接");
+        //1.7、将CSS路径和模板建立关联
+        htmlTemplate.addCssPath(cssPath);
+        //1.8、构造CSS路径
+        cssPath = new CssPath();
+        cssPath.setCssPath("html body div div div ul li div div.p-price strong");
+        cssPath.setFieldName("price");
+        cssPath.setFieldDescription("价格");
+        //1.9、将CSS路径和模板建立关联
+        htmlTemplate.addCssPath(cssPath);
+        //可象上面那样构造多个URLURL模式
+        urlPatterns.add(urlPattern);
+        //2、获取抽取规则对象
+        ExtractRegular extractRegular = ExtractRegular.getInstance(urlPatterns);
+        //注意：可通过如下3个方法动态地改变抽取规则
+        //extractRegular.addUrlPatterns(urlPatterns);
+        //extractRegular.addUrlPattern(urlPattern);
+        //extractRegular.removeUrlPattern(urlPattern.getUrlPattern());
+        //3、获取HTML抽取工具
+        HtmlExtractor htmlExtractor = HtmlExtractor.getInstance(extractRegular);
+        //4、抽取网页
+        String url = "http://list.jd.com/list.html?cat=9987,653,655";
+        List<ExtractResult> extractResults = htmlExtractor.extract(url, "utf-8");
+        //5、输出结果
+        int i = 1;
+        for (ExtractResult extractResult : extractResults) {
+            System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
+            Map<String, List<ExtractResultItem>> extractResultItems = extractResult.getExtractResultItems();
+            for(String field : extractResultItems.keySet()){
+                List<ExtractResultItem> values = extractResultItems.get(field);
+                if(values.size() > 1){
+                    int j=1;
+                    System.out.println("\t多值字段:"+field);
+                    for(ExtractResultItem item : values){
+                        System.out.println("\t\t"+(j++)+"、"+field+" = "+item.getValue());   
+                    }
+                }else{
+                    System.out.println("\t"+field+" = "+values.get(0).getValue());     
+                }
             }
             System.out.println("\tdescription = "+extractResult.getDescription());
             System.out.println("\tkeywords = "+extractResult.getKeywords());
@@ -358,7 +446,9 @@ public class HtmlExtractor {
      * @param args
      */
     public static void main(String[] args) {
-        usage1();
+        //下面的三种方法代表了3种不同的使用模式，只能单独使用
+        //usage1();
         //usage2();
+        usage3();
     }
 }

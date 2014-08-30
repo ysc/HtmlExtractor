@@ -21,7 +21,9 @@
 package org.apdplat.extractor.html.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 网页结构化信息抽取结果 
@@ -62,7 +64,7 @@ public class ExtractResult {
     /**
      * 一个网页可能有多个抽取结果项，至少要一个
      */
-    private final List<ExtractResultItem> extractResultItems = new ArrayList<>();
+    private final Map<String, List<ExtractResultItem>> extractResultItems = new HashMap<>();
     /**
      * 抽取失败日志
      */
@@ -120,12 +122,17 @@ public class ExtractResult {
         this.tableName = tableName;
     }
 
-    public List<ExtractResultItem> getExtractResultItems() {
+    public Map<String, List<ExtractResultItem>> getExtractResultItems() {
         return extractResultItems;
     }
 
     public void addExtractResultItem(ExtractResultItem extractResultItem) {
-        this.extractResultItems.add(extractResultItem);
+        List<ExtractResultItem> list = extractResultItems.get(extractResultItem.getField());
+        if(list == null){
+            list = new ArrayList<>();
+            extractResultItems.put(extractResultItem.getField(), list);
+        }
+        list.add(extractResultItem);
     }
 
     public List<ExtractFailLog> getExtractFailLogs() {
