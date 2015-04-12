@@ -139,6 +139,7 @@
         <commons-lang.version>2.6</commons-lang.version>
         <jackson.version>1.9.13</jackson.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
+        <jcl-over-slf4j.version>1.6.4</jcl-over-slf4j.version>
     </properties>
 
     <dependencies>
@@ -167,6 +168,13 @@
             </exclusions>
             <scope>runtime</scope>
         </dependency>
+        <!-- 拦截 apache commons logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${jcl-over-slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
         <!-- redis客户端库 -->
         <dependency>
             <groupId>redis.clients</groupId>
@@ -192,6 +200,12 @@
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
             <version>${commons-httpclient.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
