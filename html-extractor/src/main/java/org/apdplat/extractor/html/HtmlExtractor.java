@@ -297,6 +297,19 @@ public class HtmlExtractor {
         int i = 1;
         for (ExtractResult extractResult : extractResults) {
             System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
+            if(!extractResult.isSuccess()){
+                System.out.println("抽取失败：");
+                for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
+                    System.out.println("\turl:"+extractFailLog.getUrl());
+                    System.out.println("\tfieldName:"+extractFailLog.getFieldName());
+                    System.out.println("\tfieldDescription:"+extractFailLog.getFieldDescription());
+                    System.out.println("\tcssPath:"+extractFailLog.getCssPath());
+                    if(extractFailLog.getExtractExpression()!=null) {
+                        System.out.println("\textractExpression:" + extractFailLog.getExtractExpression());
+                    }
+                }
+                continue;
+            }
             Map<String, List<ExtractResultItem>> extractResultItems = extractResult.getExtractResultItems();
             for(String field : extractResultItems.keySet()){
                 List<ExtractResultItem> values = extractResultItems.get(field);
@@ -357,6 +370,19 @@ public class HtmlExtractor {
         int i = 1;
         for (ExtractResult extractResult : extractResults) {
             System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
+            if(!extractResult.isSuccess()){
+                System.out.println("抽取失败：");
+                for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
+                    System.out.println("\turl:"+extractFailLog.getUrl());
+                    System.out.println("\tfieldName:"+extractFailLog.getFieldName());
+                    System.out.println("\tfieldDescription:"+extractFailLog.getFieldDescription());
+                    System.out.println("\tcssPath:"+extractFailLog.getCssPath());
+                    if(extractFailLog.getExtractExpression()!=null) {
+                        System.out.println("\textractExpression:" + extractFailLog.getExtractExpression());
+                    }
+                }
+                continue;
+            }
             Map<String, List<ExtractResultItem>> extractResultItems = extractResult.getExtractResultItems();
             for(String field : extractResultItems.keySet()){
                 List<ExtractResultItem> values = extractResultItems.get(field);
@@ -425,6 +451,19 @@ public class HtmlExtractor {
         int i = 1;
         for (ExtractResult extractResult : extractResults) {
             System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
+            if(!extractResult.isSuccess()){
+                System.out.println("抽取失败：");
+                for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
+                    System.out.println("\turl:"+extractFailLog.getUrl());
+                    System.out.println("\tfieldName:"+extractFailLog.getFieldName());
+                    System.out.println("\tfieldDescription:"+extractFailLog.getFieldDescription());
+                    System.out.println("\tcssPath:"+extractFailLog.getCssPath());
+                    if(extractFailLog.getExtractExpression()!=null) {
+                        System.out.println("\textractExpression:" + extractFailLog.getExtractExpression());
+                    }
+                }
+                continue;
+            }
             Map<String, List<ExtractResultItem>> extractResultItems = extractResult.getExtractResultItems();
             for(String field : extractResultItems.keySet()){
                 List<ExtractResultItem> values = extractResultItems.get(field);
