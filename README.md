@@ -16,8 +16,8 @@
     在html-extractor-web目录下运行mvn jetty:run就可以启动Servlet/Jsp容器jetty，之后打开浏览器访问：
     http://localhost:8080/html-extractor-web/api/ 查看自己定义的规则。
     
-    注意：页面模板中定义的所有CSS路径和抽取表达式全部抽取成功，才算抽取成功
-         只要有一个CSS路径或抽取表达式失败，就是抽取失败
+    注意：页面模板中定义的所有CSS路径和抽取表达式全部抽取成功，才算抽取成功，
+         只要有一个CSS路径或抽取表达式失败，就是抽取失败。
 
 ##单机集中式使用方法：
 
@@ -92,7 +92,9 @@
 
     1、运行主节点，负责维护抽取规则：
 
-    将子项目html-extractor-web打成War包然后部署到Tomcat。
+    方法一：在html-extractor-web目录下运行mvn jetty:run 。
+    方法二：在html-extractor-web目录下运行mvn install ，
+          然后将target/html-extractor-web-1.0.war部署到Tomcat。
 
     2、获取一个HtmlExtractor的实例（从节点），示例代码如下：
 
