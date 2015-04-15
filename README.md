@@ -13,6 +13,8 @@
         <version>1.0</version>
     </dependency>
     html-extractor-web是一个war包，需要部署到Servlet/Jsp容器上。
+    在html-extractor-web目录下运行mvn jetty:run就可以启动Servlet/Jsp容器jetty，之后打开浏览器访问：
+    http://localhost:8080/html-extractor-web/api/ 查看自己定义的规则。
 
 ##单机集中式使用方法：
 
