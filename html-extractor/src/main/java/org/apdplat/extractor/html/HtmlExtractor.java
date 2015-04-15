@@ -31,7 +31,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collections;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.commons.lang.StringUtils;
 import org.apdplat.extractor.html.model.CssPath;
 import org.apdplat.extractor.html.model.ExtractFailLog;
@@ -56,6 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HtmlExtractor {
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlExtractor.class);
+    private static final WebClient WEB_CLIENT = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
     private static HtmlExtractor htmlExtractor;
     private ExtractRegular extractRegular;
 
@@ -112,6 +117,23 @@ public class HtmlExtractor {
             LOGGER.error("获取URL输入流失败：" + url, e);
         }
         return extract(url, in, encoding);
+    }
+
+    /**
+     * 使用HtmlUnit获取页面内容，HtmlUnit能执行JS，动态渲染网页，但不是所有JS都能渲染，需要测试
+     * @param url html页面路径
+     * @return
+     */
+    public List<ExtractResult> extractUseHtmlUnit(String url){
+        try{
+            HtmlPage htmlPage = WEB_CLIENT.getPage(url);
+            String html = htmlPage.getBody().asXml();
+            String encoding = htmlPage.getPageEncoding();
+            return extract(url, html.getBytes(Charset.forName(encoding)), encoding);
+        }catch (Exception e) {
+            LOGGER.error("抽取页面失败："+url, e);
+        }
+        return Collections.emptyList();
     }
     /**
      * 抽取信息
