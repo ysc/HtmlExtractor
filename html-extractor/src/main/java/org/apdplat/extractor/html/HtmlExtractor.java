@@ -33,8 +33,9 @@ import java.util.List;
 public interface HtmlExtractor {
     /**
      * 抽取信息
+     * @param url URL
      * @param html HTML
      * @return 抽取结果
      */
-    public List<ExtractResult> extract(String html);
+    public List<ExtractResult> extract(String url, String html);
 }
