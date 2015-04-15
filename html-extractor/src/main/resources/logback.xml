@@ -20,24 +20,6 @@
             <Pattern>%m%n</Pattern>j
         </layout>
     </appender>
-  
-    <logger name="org.apdplat.qa.util.NekoHTMLUtils" level="INFO"/>
-    <logger name="org.apdplat.qa.datasource.BaiduDataSource" level="INFO"/>
-    <logger name="org.apdplat.qa.model" level="INFO"/>
-    <logger name="org.apdplat.qa.util" level="INFO"/>
-    <logger name="org.apdplat.qa.score.evidence.BigramEvidenceScore" level="INFO"/>
-    <logger name="org.apdplat.qa.score.evidence.SkipBigramEvidenceScore" level="INFO"/>
-    <logger name="org.apdplat.qa.score.evidence.TermMatchEvidenceScore" level="INFO"/>
-  
-    <logger name="org.apdplat.qa.score.answer.MoreTextualAlignmentCandidateAnswerScore" level="INFO"/>
-    <logger name="org.apdplat.qa.score.answer.HotCandidateAnswerScore" level="INFO"/>
-    <logger name="org.apdplat.qa.score.answer.RewindTextualAlignmentCandidateAnswerScore" level="INFO"/>
-    <logger name="org.apdplat.qa.score.answer.TermDistanceCandidateAnswerScore" level="INFO"/>
-    <logger name="org.apdplat.qa.score.answer.TermDistanceMiniCandidateAnswerScore" level="INFO"/>
-    <logger name="org.apdplat.qa.score.answer.TermFrequencyCandidateAnswerScore" level="INFO"/>
-    <logger name="org.apdplat.qa.score.answer.TextualAlignmentCandidateAnswerScore" level="INFO"/>
-    <logger name="org.apache.commons" level="ERROR"/>
-    <logger name="httpclient" level="ERROR"/>
     <root level="INFO">
         <appender-ref ref="logfile"/>
         <appender-ref ref="stdout"/>
