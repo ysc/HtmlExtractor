@@ -19,7 +19,7 @@
     注意：页面模板中定义的所有CSS路径和抽取表达式全部抽取成功，才算抽取成功，
          只要有一个CSS路径或抽取表达式失败，就是抽取失败。
          
-    [如何使用HtmlExtractor实现基于模板的网页结构化信息精准抽取?](http://my.oschina.net/apdplat/blog/402149)
+[如何使用HtmlExtractor实现基于模板的网页结构化信息精准抽取?](http://my.oschina.net/apdplat/blog/402149)
 
 ##单机集中式使用方法：
 
