@@ -10,7 +10,7 @@
     <dependency>
         <groupId>org.apdplat</groupId>
         <artifactId>html-extractor</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </dependency>
     html-extractor-web是一个war包，需要部署到Servlet/Jsp容器上。
     在html-extractor-web目录下运行mvn jetty:run就可以启动Servlet/Jsp容器jetty，之后打开浏览器访问：
@@ -22,7 +22,6 @@
 ##单机集中式使用方法：
 
     //1、构造抽取规则
-
     List<UrlPattern> urlPatterns = new ArrayList<>();
     //1.1、构造URL模式
     UrlPattern urlPattern = new UrlPattern();
@@ -49,21 +48,23 @@
     htmlTemplate.addCssPath(cssPath);
     //可象上面那样构造多个URLURL模式
     urlPatterns.add(urlPattern);
-
+    
     //2、获取抽取规则对象
     ExtractRegular extractRegular = ExtractRegular.getInstance(urlPatterns);
     //注意：可通过如下3个方法动态地改变抽取规则
     //extractRegular.addUrlPatterns(urlPatterns);
     //extractRegular.addUrlPattern(urlPattern);
     //extractRegular.removeUrlPattern(urlPattern.getUrlPattern());
-
+    
     //3、获取HTML抽取工具
-    HtmlExtractor htmlExtractor = HtmlExtractor.getInstance(extractRegular);
-
+    HtmlExtractor htmlExtractor = new DefaultHtmlExtractor(extractRegular);
+    
     //4、抽取网页
     String url = "http://money.163.com/08/1219/16/4THR2TMP002533QK.html";
-    List<ExtractResult> extractResults = htmlExtractor.extract(url, "gb2312");
-
+    HtmlFetcher htmlFetcher = new JSoupHtmlFetcher();
+    String html = htmlFetcher.fetch(url);
+    List<ExtractResult> extractResults = htmlExtractor.extract(url, html);
+    
     //5、输出结果
     int i = 1;
     for (ExtractResult extractResult : extractResults) {
@@ -83,8 +84,18 @@
             }
             continue;
         }
-        for(ExtractResultItem extractResultItem : extractResult.getExtractResultItems()){
-            System.out.print("\t"+extractResultItem.getField()+" = "+extractResultItem.getValue());              
+        Map<String, List<ExtractResultItem>> extractResultItems = extractResult.getExtractResultItems();
+        for(String field : extractResultItems.keySet()){
+            List<ExtractResultItem> values = extractResultItems.get(field);
+            if(values.size() > 1){
+                int j=1;
+                System.out.println("\t多值字段:"+field);
+                for(ExtractResultItem item : values){
+                    System.out.println("\t\t"+(j++)+"、"+field+" = "+item.getValue());   
+                }
+            }else{
+                System.out.println("\t"+field+" = "+values.get(0).getValue());     
+            }
         }
         System.out.println("\tdescription = "+extractResult.getDescription());
         System.out.println("\tkeywords = "+extractResult.getKeywords());
@@ -93,22 +104,22 @@
 ##多机分布式使用方法：
 
     1、运行主节点，负责维护抽取规则：
-
     方法一：在html-extractor-web目录下运行mvn jetty:run 。
     方法二：在html-extractor-web目录下运行mvn install ，
           然后将target/html-extractor-web-1.0.war部署到Tomcat。
 
     2、获取一个HtmlExtractor的实例（从节点），示例代码如下：
-
     String allExtractRegularUrl = "http://localhost:8080/HtmlExtractorServer/api/all_extract_regular.jsp";
     String redisHost = "localhost";
     int redisPort = 6379;
-    HtmlExtractor htmlExtractor = HtmlExtractor.getInstance(allExtractRegularUrl, redisHost, redisPort);
+    ExtractRegular extractRegular = ExtractRegular.getInstance(allExtractRegularUrl, redisHost, redisPort);
+    HtmlExtractor htmlExtractor = new DefaultHtmlExtractor(extractRegular);
 
     3、抽取信息，示例代码如下：
-
     String url = "http://money.163.com/08/1219/16/4THR2TMP002533QK.html";
-    List<ExtractResult> extractResults = htmlExtractor.extract(url, "gb2312");
+    HtmlFetcher htmlFetcher = new JSoupHtmlFetcher();
+    String html = htmlFetcher.fetch(url);
+    List<ExtractResult> extractResults = htmlExtractor.extract(url, html);
 
     int i = 1;
     for (ExtractResult extractResult : extractResults) {
