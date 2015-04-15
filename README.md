@@ -67,6 +67,7 @@
     //5、输出结果
     int i = 1;
     for (ExtractResult extractResult : extractResults) {
+        System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
         if(!extractResult.isSuccess()){
             System.out.println("抽取失败：");
             for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
@@ -80,7 +81,6 @@
             }
             continue;
         }
-        System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
         for(ExtractResultItem extractResultItem : extractResult.getExtractResultItems()){
             System.out.print("\t"+extractResultItem.getField()+" = "+extractResultItem.getValue());              
         }
@@ -110,6 +110,7 @@
 
     int i = 1;
     for (ExtractResult extractResult : extractResults) {
+        System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
         if(!extractResult.isSuccess()){
             System.out.println("抽取失败：");
             for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
@@ -123,7 +124,6 @@
             }
             continue;
         }
-        System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
         for(ExtractResultItem extractResultItem : extractResult.getExtractResultItems()){
             System.out.print("\t"+extractResultItem.getField()+" = "+extractResultItem.getValue());              
         }
