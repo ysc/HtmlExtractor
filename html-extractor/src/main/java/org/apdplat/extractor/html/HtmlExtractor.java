@@ -189,11 +189,16 @@ public class HtmlExtractor {
                 try {
                     //按页面模板的定义对网页进行抽取
                     ExtractResult extractResult = extractHtmlTemplate(url, htmlTemplate, doc);
-                    extractResult.setContent(content);
-                    extractResult.setEncoding(encoding);
-                    extractResult.setKeywords(keywords);
-                    extractResult.setDescription(description);
-                    extractResults.add(extractResult);
+                    //同样的URL模式，因为改版等原因，可能会对应多套模板，多套模板中我们一般只需要抽取一套
+                    if(!extractResult.getExtractFailLogs().isEmpty() || !extractResult.getExtractResultItems().isEmpty()) {
+                        extractResult.setContent(content);
+                        extractResult.setEncoding(encoding);
+                        extractResult.setKeywords(keywords);
+                        extractResult.setDescription(description);
+                        extractResults.add(extractResult);
+                    }else{
+                        LOGGER.debug(url + " 的模板 " + htmlTemplate.getTemplateName() + " 未抽取到");
+                    }
                 } catch (Exception e) {
                     LOGGER.error("页面模板抽取失败：" + htmlTemplate.getTemplateName(), e);
                 }
@@ -323,6 +328,8 @@ public class HtmlExtractor {
                 System.out.println("抽取失败：");
                 for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
                     System.out.println("\turl:"+extractFailLog.getUrl());
+                    System.out.println("\turlPattern:"+extractFailLog.getUrlPattern());
+                    System.out.println("\ttemplateName:" + extractFailLog.getTemplateName());
                     System.out.println("\tfieldName:"+extractFailLog.getFieldName());
                     System.out.println("\tfieldDescription:"+extractFailLog.getFieldDescription());
                     System.out.println("\tcssPath:"+extractFailLog.getCssPath());
@@ -396,6 +403,8 @@ public class HtmlExtractor {
                 System.out.println("抽取失败：");
                 for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
                     System.out.println("\turl:"+extractFailLog.getUrl());
+                    System.out.println("\turlPattern:"+extractFailLog.getUrlPattern());
+                    System.out.println("\ttemplateName:"+extractFailLog.getTemplateName());
                     System.out.println("\tfieldName:"+extractFailLog.getFieldName());
                     System.out.println("\tfieldDescription:"+extractFailLog.getFieldDescription());
                     System.out.println("\tcssPath:"+extractFailLog.getCssPath());
@@ -477,6 +486,8 @@ public class HtmlExtractor {
                 System.out.println("抽取失败：");
                 for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
                     System.out.println("\turl:"+extractFailLog.getUrl());
+                    System.out.println("\turlPattern:"+extractFailLog.getUrlPattern());
+                    System.out.println("\ttemplateName:"+extractFailLog.getTemplateName());
                     System.out.println("\tfieldName:"+extractFailLog.getFieldName());
                     System.out.println("\tfieldDescription:"+extractFailLog.getFieldDescription());
                     System.out.println("\tcssPath:"+extractFailLog.getCssPath());
@@ -509,7 +520,7 @@ public class HtmlExtractor {
     public static void main(String[] args) {
         //下面的三种方法代表了3种不同的使用模式，只能单独使用
         //usage1();
-        //usage2();
-        usage3();
+        usage2();
+        //usage3();
     }
 }
