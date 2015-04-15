@@ -72,6 +72,8 @@
             System.out.println("抽取失败：");
             for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
                 System.out.println("\turl:"+extractFailLog.getUrl());
+                System.out.println("\turlPattern:"+extractFailLog.getUrlPattern());
+                System.out.println("\ttemplateName:"+extractFailLog.getTemplateName());
                 System.out.println("\tfieldName:"+extractFailLog.getFieldName());
                 System.out.println("\tfieldDescription:"+extractFailLog.getFieldDescription());
                 System.out.println("\tcssPath:"+extractFailLog.getCssPath());
@@ -115,6 +117,8 @@
             System.out.println("抽取失败：");
             for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
                 System.out.println("\turl:"+extractFailLog.getUrl());
+                System.out.println("\turlPattern:"+extractFailLog.getUrlPattern());
+                System.out.println("\ttemplateName:"+extractFailLog.getTemplateName());
                 System.out.println("\tfieldName:"+extractFailLog.getFieldName());
                 System.out.println("\tfieldDescription:"+extractFailLog.getFieldDescription());
                 System.out.println("\tcssPath:"+extractFailLog.getCssPath());
