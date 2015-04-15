@@ -15,6 +15,9 @@
     html-extractor-web是一个war包，需要部署到Servlet/Jsp容器上。
     在html-extractor-web目录下运行mvn jetty:run就可以启动Servlet/Jsp容器jetty，之后打开浏览器访问：
     http://localhost:8080/html-extractor-web/api/ 查看自己定义的规则。
+    
+    注意：页面模板中定义的所有CSS路径和抽取表达式全部抽取成功，才算抽取成功
+         只要有一个CSS路径或抽取表达式失败，就是抽取失败
 
 ##单机集中式使用方法：
 
@@ -64,6 +67,19 @@
     //5、输出结果
     int i = 1;
     for (ExtractResult extractResult : extractResults) {
+        if(!extractResult.isSuccess()){
+            System.out.println("抽取失败：");
+            for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
+                System.out.println("\turl:"+extractFailLog.getUrl());
+                System.out.println("\tfieldName:"+extractFailLog.getFieldName());
+                System.out.println("\tfieldDescription:"+extractFailLog.getFieldDescription());
+                System.out.println("\tcssPath:"+extractFailLog.getCssPath());
+                if(extractFailLog.getExtractExpression()!=null) {
+                    System.out.println("\textractExpression:" + extractFailLog.getExtractExpression());
+                }
+            }
+            continue;
+        }
         System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
         for(ExtractResultItem extractResultItem : extractResult.getExtractResultItems()){
             System.out.print("\t"+extractResultItem.getField()+" = "+extractResultItem.getValue());              
@@ -92,6 +108,19 @@
 
     int i = 1;
     for (ExtractResult extractResult : extractResults) {
+        if(!extractResult.isSuccess()){
+            System.out.println("抽取失败：");
+            for(ExtractFailLog extractFailLog : extractResult.getExtractFailLogs()){
+                System.out.println("\turl:"+extractFailLog.getUrl());
+                System.out.println("\tfieldName:"+extractFailLog.getFieldName());
+                System.out.println("\tfieldDescription:"+extractFailLog.getFieldDescription());
+                System.out.println("\tcssPath:"+extractFailLog.getCssPath());
+                if(extractFailLog.getExtractExpression()!=null) {
+                    System.out.println("\textractExpression:" + extractFailLog.getExtractExpression());
+                }
+            }
+            continue;
+        }
         System.out.println((i++) + "、网页 " + extractResult.getUrl() + " 的抽取结果");
         for(ExtractResultItem extractResultItem : extractResult.getExtractResultItems()){
             System.out.print("\t"+extractResultItem.getField()+" = "+extractResultItem.getValue());              
