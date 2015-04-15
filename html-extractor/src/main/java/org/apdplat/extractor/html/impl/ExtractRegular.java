@@ -18,7 +18,7 @@
  * 
  */
 
-package org.apdplat.extractor.html;
+package org.apdplat.extractor.html.impl;
 
 import java.io.IOException;
 import java.net.URL;

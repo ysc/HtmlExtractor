@@ -18,7 +18,7 @@
  * 
  */
 
-package org.apdplat.extractor.html;
+package org.apdplat.extractor.html.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.apdplat.extractor.html.model.CssPath;
