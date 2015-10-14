@@ -2,7 +2,7 @@
 
 ##HtmlExtractor是为大规模分布式环境设计的，采用主从架构，主节点负责维护抽取规则，从节点向主节点请求抽取规则，当抽取规则发生变化，主节点主动通知从节点，从而能实现抽取规则变化之后的实时动态生效。
 
-[捐赠致谢](https://github.com/ysc/QuestionAnsweringSystem/wiki/donation)
+##[捐赠致谢](https://github.com/ysc/QuestionAnsweringSystem/wiki/donation)
 
 ##如何使用？
 
