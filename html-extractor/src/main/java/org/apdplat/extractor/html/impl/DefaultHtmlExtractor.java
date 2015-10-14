@@ -192,7 +192,7 @@ public class DefaultHtmlExtractor implements HtmlExtractor{
         }
         return extractResult;
     }
-    private static void usage1(){
+    private static void usage1(HtmlFetcher htmlFetcher){
         //1、构造抽取规则
         List<UrlPattern> urlPatterns = new ArrayList<>();
         //1.1、构造URL模式
@@ -230,7 +230,6 @@ public class DefaultHtmlExtractor implements HtmlExtractor{
        HtmlExtractor htmlExtractor = new DefaultHtmlExtractor(extractRegular);
         //4、抽取网页
         String url = "http://money.163.com/08/1219/16/4THR2TMP002533QK.html";
-        HtmlFetcher htmlFetcher = new JSoupHtmlFetcher();
         String html = htmlFetcher.fetch(url);
         List<ExtractResult> extractResults = htmlExtractor.extract(url, html);
         //5、输出结果
@@ -269,7 +268,7 @@ public class DefaultHtmlExtractor implements HtmlExtractor{
             System.out.println("\tkeywords = "+extractResult.getKeywords());
         }
     }
-    private static void usage2(){
+    private static void usage2(HtmlFetcher htmlFetcher){
         String allExtractRegularUrl = "http://localhost:8080/html-extractor-web/api/all_extract_regular.jsp";
         String redisHost = "localhost";
         int redisPort = 6379;
@@ -278,7 +277,6 @@ public class DefaultHtmlExtractor implements HtmlExtractor{
         HtmlExtractor htmlExtractor = new DefaultHtmlExtractor(extractRegular);
 
         String url = "http://money.163.com/08/1219/16/4THR2TMP002533QK.html";
-        HtmlFetcher htmlFetcher = new JSoupHtmlFetcher();
         String html = htmlFetcher.fetch(url);
         List<ExtractResult> extractResults = htmlExtractor.extract(url, html);
 
@@ -317,7 +315,7 @@ public class DefaultHtmlExtractor implements HtmlExtractor{
             System.out.println("\tkeywords = "+extractResult.getKeywords());
         }
     }
-    private static void usage3(){
+    private static void usage3(HtmlFetcher htmlFetcher){
         //1、构造抽取规则
         List<UrlPattern> urlPatterns = new ArrayList<>();
         //1.1、构造URL模式
@@ -363,7 +361,6 @@ public class DefaultHtmlExtractor implements HtmlExtractor{
         HtmlExtractor htmlExtractor = new DefaultHtmlExtractor(extractRegular);
         //4、抽取网页
         String url = "http://list.jd.com/list.html?cat=9987,653,655";
-        HtmlFetcher htmlFetcher = new JSoupHtmlFetcher();
         String html = htmlFetcher.fetch(url);
         List<ExtractResult> extractResults = htmlExtractor.extract(url, html);
         //5、输出结果
@@ -407,8 +404,8 @@ public class DefaultHtmlExtractor implements HtmlExtractor{
      */
     public static void main(String[] args) {
         //下面的三种方法代表了3种不同的使用模式，只能单独使用
-        //usage1();
-        //usage2();
-        usage3();
+        //usage1(new JSoupHtmlFetcher());
+        //usage2(new JSoupHtmlFetcher());
+        usage3(new SeleniumHtmlFetcher());
     }
 }
