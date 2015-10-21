@@ -78,7 +78,7 @@ public class BBC {
                             //因为BBC的访问不稳定，所以可能需要执行程序多次才能完整下载完毕，所以这里要处理已存在文件的问题
                             if (!Files.exists(out)) {
                                 //下载文件
-                                Connection.Response response = Jsoup.connect(href).ignoreContentType(true).timeout(timeout).execute();
+                                Connection.Response response = Jsoup.connect(href).maxBodySize(0).ignoreContentType(true).timeout(timeout).execute();
                                 //将文件保存到本地
                                 Files.write(out, response.bodyAsBytes());
                                 System.out.println("unit " + i + "、save resource to: " + out);
