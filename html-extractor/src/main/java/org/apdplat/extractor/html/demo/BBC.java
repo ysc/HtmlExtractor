@@ -33,7 +33,7 @@ import java.nio.file.Paths;
  * 下载BBC Learning English在线课程
  */
 public class BBC {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) {
         String path = "/Users/apple/百度云同步盘/BBC/";
         download("lower-intermediate", 30, path);
         download("intermediate", 25, path);
@@ -48,9 +48,8 @@ public class BBC {
      * @param type 课程类型
      * @param count 课数
      * @param path 保存到本地的路径
-     * @throws Exception
      */
-    public static void download(String type, int count, String path) throws Exception{
+    public static void download(String type, int count, String path) {
         int timeout = 300000;
         for(int i=1; i<=count; i++) {
             try {
