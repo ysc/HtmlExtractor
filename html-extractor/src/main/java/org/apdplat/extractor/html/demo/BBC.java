@@ -39,6 +39,17 @@ public class BBC {
         download("intermediate", 25, path);
         download("emw", 15, path);
     }
+
+    /**
+     * BBC Learning English在线课程类型：
+     * 1、lower-intermediate http://www.bbc.co.uk/learningenglish/english/course/lower-intermediate
+     * 2、intermediate http://www.bbc.co.uk/learningenglish/english/course/intermediate
+     * 3、emw http://www.bbc.co.uk/learningenglish/english/course/emw
+     * @param type 课程类型
+     * @param count 课数
+     * @param path 保存到本地的路径
+     * @throws Exception
+     */
     public static void download(String type, int count, String path) throws Exception{
         int timeout = 300000;
         for(int i=1; i<=count; i++) {
@@ -50,17 +61,26 @@ public class BBC {
                 for (Element element : elements) {
                     try {
                         String href = element.attr("href");
+                        //只下载mp3和pdf文件
                         if (href.endsWith(".mp3") || href.endsWith(".pdf")) {
+                            //提取文件名称
                             String[] attr = href.split("/");
                             String fileName = attr[attr.length - 1];
                             System.out.println("unit " + i + "、find resource: " + href);
+                            //确保本地路径存储
                             Path dir = Paths.get(path, type);
                             if(!Files.exists(dir)){
+                                //不存在则新建
                                 dir.toFile().mkdirs();
                             }
+                            //保存文件的完整本地路径
                             Path out = Paths.get(path, type, fileName);
+                            //如果文件存在则表示之前已经下载过，本次不用下载
+                            //因为BBC的访问不稳定，所以可能需要执行程序多次才能完整下载完毕，所以这里要处理已存在文件的问题
                             if (!Files.exists(out)) {
+                                //下载文件
                                 Connection.Response response = Jsoup.connect(href).ignoreContentType(true).timeout(timeout).execute();
+                                //将文件保存到本地
                                 Files.write(out, response.bodyAsBytes());
                                 System.out.println("unit " + i + "、save resource to: " + out);
                             } else {
