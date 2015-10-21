@@ -60,8 +60,8 @@ public class BBC {
                 for (Element element : elements) {
                     try {
                         String href = element.attr("href");
-                        //只下载mp3和pdf文件
-                        if (href.endsWith(".mp3") || href.endsWith(".pdf")) {
+                        //只下载mp3、mp4和pdf文件
+                        if (href.endsWith(".mp3") || href.endsWith(".mp4") || href.endsWith(".pdf")) {
                             //提取文件名称
                             String[] attr = href.split("/");
                             String fileName = attr[attr.length - 1];
