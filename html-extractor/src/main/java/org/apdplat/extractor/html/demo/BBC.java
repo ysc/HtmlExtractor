@@ -64,7 +64,7 @@ public class BBC {
                         if (href.endsWith(".mp3") || href.endsWith(".wav") || href.endsWith(".mp4") || href.endsWith(".pdf")) {
                             //提取文件名称
                             String[] attr = href.split("/");
-                            String fileName = attr[attr.length - 1];
+                            String fileName = attr[attr.length - 2]+"_"+attr[attr.length - 1];
                             System.out.println("unit " + i + "、find resource: " + href);
                             //确保本地路径存储
                             Path dir = Paths.get(path, type);
