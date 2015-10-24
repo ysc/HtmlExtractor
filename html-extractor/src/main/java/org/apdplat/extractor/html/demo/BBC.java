@@ -20,24 +20,143 @@ package org.apdplat.extractor.html.demo;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by ysc on 10/21/15.
  * 下载BBC Learning English在线课程
  */
 public class BBC {
+    private static int count = 0;
     public static void main(String[] args) {
         String path = "/Users/apple/百度云同步盘/BBC/";
+
+        //Features
+        download("http://www.bbc.co.uk/learningenglish/english/features/news-report",
+                "News Report",
+                path);
+        download("http://www.bbc.co.uk/learningenglish/english/features/the-english-we-speak",
+                "The English We Speak",
+                path);
+        download("http://www.bbc.co.uk/learningenglish/english/features/lingohack",
+                "Lingohack",
+                path);
+        download("http://www.bbc.co.uk/learningenglish/english/features/6-minute-english",
+                "6 Minute English",
+                path);
+        download("http://www.bbc.co.uk/learningenglish/english/features/drama",
+                "Dramas from BBC Learning English",
+                path);
+        download("http://www.bbc.co.uk/learningenglish/english/features/witn",
+                "Words in the News",
+                path);
+
+        //Courses
         download("lower-intermediate", 30, path);
-        download("intermediate", 25, path);
+        download("intermediate", 30, path);
         download("emw", 15, path);
+
+        System.out.println("total file count: " + count);
+    }
+
+    /**
+     * 下载课程
+     * @param entranceURL 课程入口页面
+     * @param type 课程类型
+     * @param path 保存到本地的路径
+     */
+    public static void download(String entranceURL, String type, String path){
+        int timeout = 300000;
+        if(!entranceURL.endsWith("/")){
+            entranceURL += "/";
+        }
+        Set<String> urls = new HashSet<>();
+        boolean ok = false;
+        while (!ok) {
+            try {
+                System.out.println("【"+type+"】*** connect " + entranceURL);
+                for (Element element : Jsoup.connect(entranceURL).timeout(timeout).get().select("a")) {
+                    String href = element.attr("href").trim();
+                    if (!href.startsWith("http")) {
+                        if(!href.startsWith("/")){
+                            href = "/"+href;
+                        }
+                        href = "http://www.bbc.co.uk" + href;
+                    }
+                    if (href.startsWith(entranceURL) && !href.equals(entranceURL)) {
+                        urls.add(href);
+                    }
+                }
+                ok = true;
+            } catch (Exception e) {
+                System.out.println(e.getMessage() + " retry...");
+            }
+        }
+        AtomicInteger i = new AtomicInteger(1);
+        Set<String> resources = new HashSet<>();
+        urls.stream().sorted().forEach(url -> {
+            boolean success = false;
+            while (!success) {
+                try {
+                    System.out.println(i.get() + "、connect " + url);
+                    for (Element element : Jsoup.connect(url).timeout(timeout).get().select("a")) {
+                        String href = element.attr("href").trim();
+                        //只下载mp3、mp4、wav和pdf文件
+                        if (href.endsWith(".mp3") || href.endsWith(".wav") || href.endsWith(".mp4") || href.endsWith(".pdf")) {
+                            resources.add(href);
+                        }
+                    }
+                    i.incrementAndGet();
+                    success = true;
+                } catch (Exception e) {
+                    System.out.println(e.getMessage() + " retry...");
+                }
+            }
+        });
+        AtomicInteger j = new AtomicInteger(1);
+        count += resources.size();
+        resources.stream().sorted().forEach(resource -> {
+            boolean success = false;
+            while (!success) {
+                try {
+                    //提取文件名称
+                    String[] attr = resource.split("/");
+                    String fileName = attr[attr.length - 2] + "_" + attr[attr.length - 1].replace(attr[attr.length - 2], "");
+                    fileName = fileName.replace("_download", "");
+                    System.out.println(resources.size() + "/" + j.get() + "、find resource: " + resource);
+                    //确保本地路径存储
+                    Path dir = Paths.get(path, type);
+                    if (!Files.exists(dir)) {
+                        //不存在则新建
+                        dir.toFile().mkdirs();
+                    }
+                    //保存文件的完整本地路径
+                    Path out = Paths.get(path, type, fileName);
+                    //如果文件存在则表示之前已经下载过，本次不用下载
+                    //因为BBC的访问不稳定，所以可能需要执行程序多次才能完整下载完毕，所以这里要处理已存在文件的问题
+                    if (!Files.exists(out)) {
+                        //下载文件
+                        Connection.Response response = Jsoup.connect(resource).maxBodySize(0).ignoreContentType(true).timeout(timeout).execute();
+                        //将文件保存到本地
+                        Files.write(out, response.bodyAsBytes());
+                        System.out.println(resources.size() + "/" + j.get() + "、save resource to: " + out);
+                    } else {
+                        System.out.println(resources.size() + "/" + j.get() + "、resource exist, don't need to download");
+                    }
+                    j.incrementAndGet();
+                    success = true;
+                } catch (Exception e) {
+                    System.out.println(e.getMessage() + " retry...");
+                }
+            }
+        });
     }
 
     /**
@@ -46,53 +165,69 @@ public class BBC {
      * 2、intermediate http://www.bbc.co.uk/learningenglish/english/course/intermediate
      * 3、emw http://www.bbc.co.uk/learningenglish/english/course/emw
      * @param type 课程类型
-     * @param count 课数
+     * @param unitCount 课数
      * @param path 保存到本地的路径
      */
-    public static void download(String type, int count, String path) {
+    public static void download(String type, int unitCount, String path) {
         int timeout = 300000;
-        for(int i=1; i<=count; i++) {
-            try {
-                String url = "http://www.bbc.co.uk/learningenglish/english/course/" + type + "/unit-" + i + "/downloads";
-                System.out.println("connect " + url);
-                Document doc = Jsoup.connect(url).timeout(timeout).get();
-                Elements elements = doc.select("a");
-                for (Element element : elements) {
-                    try {
-                        String href = element.attr("href");
+        Set<String> hrefs = new HashSet<>();
+        System.out.println("【"+type+"】*** starting... ");
+        for(int i=1; i<=unitCount; i++) {
+            int times=0;
+            boolean success = false;
+            while (!success && (times++) < 3) {
+                try {
+                    String url = "http://www.bbc.co.uk/learningenglish/english/course/" + type + "/unit-" + i + "/downloads";
+                    System.out.println("unit " + i + "、connect " + url);
+                    for (Element element : Jsoup.connect(url).timeout(timeout).get().select("a")) {
+                        String href = element.attr("href").trim();
                         //只下载mp3、mp4、wav和pdf文件
                         if (href.endsWith(".mp3") || href.endsWith(".wav") || href.endsWith(".mp4") || href.endsWith(".pdf")) {
-                            //提取文件名称
-                            String[] attr = href.split("/");
-                            String fileName = attr[attr.length - 2]+"_"+attr[attr.length - 1];
-                            System.out.println("unit " + i + "、find resource: " + href);
-                            //确保本地路径存储
-                            Path dir = Paths.get(path, type);
-                            if(!Files.exists(dir)){
-                                //不存在则新建
-                                dir.toFile().mkdirs();
-                            }
-                            //保存文件的完整本地路径
-                            Path out = Paths.get(path, type, fileName);
-                            //如果文件存在则表示之前已经下载过，本次不用下载
-                            //因为BBC的访问不稳定，所以可能需要执行程序多次才能完整下载完毕，所以这里要处理已存在文件的问题
-                            if (!Files.exists(out)) {
-                                //下载文件
-                                Connection.Response response = Jsoup.connect(href).maxBodySize(0).ignoreContentType(true).timeout(timeout).execute();
-                                //将文件保存到本地
-                                Files.write(out, response.bodyAsBytes());
-                                System.out.println("unit " + i + "、save resource to: " + out);
-                            } else {
-                                System.out.println("unit " + i + "、resource exist, don't need to download");
-                            }
+                            hrefs.add(href);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                    success = true;
+                } catch (Exception e) {
+                    System.out.println(e.getMessage()+" retry...");
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
+        AtomicInteger i = new AtomicInteger(1);
+        count += hrefs.size();
+        hrefs.stream().sorted().forEach(href -> {
+            boolean success = false;
+            while (!success) {
+                try {
+                    //提取文件名称
+                    String[] attr = href.split("/");
+                    String fileName = attr[attr.length - 2] + "_" + attr[attr.length - 1].replace(attr[attr.length - 2], "");
+                    fileName = fileName.replace("_download", "");
+                    System.out.println(hrefs.size() + "/" + i.get() + "、find resource: " + href);
+                    //确保本地路径存储
+                    Path dir = Paths.get(path, type);
+                    if (!Files.exists(dir)) {
+                        //不存在则新建
+                        dir.toFile().mkdirs();
+                    }
+                    //保存文件的完整本地路径
+                    Path out = Paths.get(path, type, fileName);
+                    //如果文件存在则表示之前已经下载过，本次不用下载
+                    //因为BBC的访问不稳定，所以可能需要执行程序多次才能完整下载完毕，所以这里要处理已存在文件的问题
+                    if (!Files.exists(out)) {
+                        //下载文件
+                        Connection.Response response = Jsoup.connect(href).maxBodySize(0).ignoreContentType(true).timeout(timeout).execute();
+                        //将文件保存到本地
+                        Files.write(out, response.bodyAsBytes());
+                        System.out.println(hrefs.size() + "/" + i.get() + "、save resource to: " + out);
+                    } else {
+                        System.out.println(hrefs.size() + "/" + i.get() + "、resource exist, don't need to download");
+                    }
+                    i.incrementAndGet();
+                    success = true;
+                } catch (Exception e) {
+                    System.out.println(e.getMessage()+" retry...");
+                }
+            }
+        });
     }
 }
