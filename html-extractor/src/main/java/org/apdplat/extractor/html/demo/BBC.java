@@ -38,7 +38,71 @@ public class BBC {
     public static void main(String[] args) {
         String path = "/Users/apple/百度云同步盘/BBC/";
 
+        //***
+        //archived version
+        //***
+        //General & Business English
+        download("http://www.bbc.co.uk/worldservice/learningenglish/general/sixminute/",
+                "6 Minute English Archived",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/general/englishatwork/",
+                "English at Work",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/general/expressenglish/",
+                "Express English",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/general/talkaboutenglish/",
+                "Talk about English",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/business/talkingbusiness/",
+                "Talking Business",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/business/wab/",
+                "Working Abroad",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/work/handy/",
+                "Handy Guide",
+                path);
+        //Grammar, Vocabulary & Pronunciation
+        download("http://www.bbc.co.uk/worldservice/learningenglish/language/wordsinthenews/",
+                "Words in the News Archived",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/language/theenglishwespeak/",
+                "The English We Speak Archived",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/language/theteacher/",
+                "The Teacher",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/language/newsextra/",
+                "News English Extra",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/language/newsaboutbritain/",
+                "News about Britain",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/language/askaboutenglish/",
+                "Ask about English",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/language/howto/",
+                "How to...",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/language/uptodate/",
+                "Keep your English up to date",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/language/faceup/",
+                "Face Up to Phrasals",
+                path);
+        //Talking Sport
+        download("http://www.bbc.co.uk/worldservice/learningenglish/talkingsport/",
+                "Talking Sport",
+                path);
+        //Specials
+        download("http://www.bbc.co.uk/worldservice/learningenglish/specials/",
+                "Specials",
+                path);
+
+        //***
         //Features
+        //***
         download("http://www.bbc.co.uk/learningenglish/english/features/news-report",
                 "News Report",
                 path);
@@ -51,6 +115,11 @@ public class BBC {
         download("http://www.bbc.co.uk/learningenglish/english/features/6-minute-english",
                 "6 Minute English",
                 path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/grammar/pron/sounds/",
+                "The sounds of English",
+                path,
+                true,
+                true);
         download("http://www.bbc.co.uk/learningenglish/english/features/drama",
                 "Dramas from BBC Learning English",
                 path);
@@ -58,7 +127,9 @@ public class BBC {
                 "Words in the News",
                 path);
 
+        //***
         //Courses
+        //***
         download("lower-intermediate", 30, path);
         download("intermediate", 30, path);
         download("emw", 15, path);
@@ -66,31 +137,38 @@ public class BBC {
         System.out.println("total file count: " + count);
     }
 
+    public static void download(String entranceURL, String type, String path){
+        download(entranceURL, type, path, false, false);
+    }
     /**
      * 下载课程
      * @param entranceURL 课程入口页面
      * @param type 课程类型
      * @param path 保存到本地的路径
+     * @param containEntrance 是否下载入口页面上的课程
+     * @param justOriginalName 是否使用原来的文件名称保存文件
      */
-    public static void download(String entranceURL, String type, String path){
+    public static void download(String entranceURL, String type, String path, boolean containEntrance, boolean justOriginalName){
         int timeout = 300000;
         if(!entranceURL.endsWith("/")){
             entranceURL += "/";
         }
         Set<String> urls = new HashSet<>();
         boolean ok = false;
-        while (!ok) {
+        int limit=0;
+        while (!ok && (limit++) < 3) {
             try {
                 System.out.println("【"+type+"】*** connect " + entranceURL);
                 for (Element element : Jsoup.connect(entranceURL).timeout(timeout).get().select("a")) {
                     String href = element.attr("href").trim();
                     if (!href.startsWith("http")) {
-                        if(!href.startsWith("/")){
-                            href = "/"+href;
+                        if(href.startsWith("/")){
+                            href = "http://www.bbc.co.uk" + href;
+                        }else{
+                            href = entranceURL + href;
                         }
-                        href = "http://www.bbc.co.uk" + href;
                     }
-                    if (href.startsWith(entranceURL) && !href.equals(entranceURL)) {
+                    if (href.startsWith(entranceURL) && (!href.equals(entranceURL) || containEntrance) ) {
                         urls.add(href);
                     }
                 }
@@ -103,13 +181,22 @@ public class BBC {
         Set<String> resources = new HashSet<>();
         urls.stream().sorted().forEach(url -> {
             boolean success = false;
-            while (!success) {
+            int times=0;
+            while (!success && (times++) < 3) {
                 try {
                     System.out.println(i.get() + "、connect " + url);
                     for (Element element : Jsoup.connect(url).timeout(timeout).get().select("a")) {
                         String href = element.attr("href").trim();
                         //只下载mp3、mp4、wav和pdf文件
                         if (href.endsWith(".mp3") || href.endsWith(".wav") || href.endsWith(".mp4") || href.endsWith(".pdf")) {
+                            if (!href.startsWith("http")) {
+                                if(href.startsWith("/")){
+                                    href = "http://www.bbc.co.uk" + href;
+                                }else{
+                                    String[] attr = url.split("/");
+                                    href = url.substring(0, url.length()-attr[attr.length-1].length()) + href;
+                                }
+                            }
                             resources.add(href);
                         }
                     }
@@ -124,12 +211,19 @@ public class BBC {
         count += resources.size();
         resources.stream().sorted().forEach(resource -> {
             boolean success = false;
-            while (!success) {
+            int times=0;
+            while (!success && (times++) < 3) {
                 try {
                     //提取文件名称
                     String[] attr = resource.split("/");
                     String fileName = attr[attr.length - 2] + "_" + attr[attr.length - 1].replace(attr[attr.length - 2], "");
+                    if(attr[attr.length - 1].endsWith(attr[attr.length - 2])){
+                        fileName = attr[attr.length - 1];
+                    }
                     fileName = fileName.replace("_download", "");
+                    if(justOriginalName){
+                        fileName = attr[attr.length - 1];
+                    }
                     System.out.println(resources.size() + "/" + j.get() + "、find resource: " + resource);
                     //确保本地路径存储
                     Path dir = Paths.get(path, type);
@@ -201,6 +295,9 @@ public class BBC {
                     //提取文件名称
                     String[] attr = href.split("/");
                     String fileName = attr[attr.length - 2] + "_" + attr[attr.length - 1].replace(attr[attr.length - 2], "");
+                    if(attr[attr.length - 1].endsWith(attr[attr.length - 2])){
+                        fileName = attr[attr.length - 1];
+                    }
                     fileName = fileName.replace("_download", "");
                     System.out.println(hrefs.size() + "/" + i.get() + "、find resource: " + href);
                     //确保本地路径存储
