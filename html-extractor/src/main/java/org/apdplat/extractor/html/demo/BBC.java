@@ -82,9 +82,6 @@ public class BBC {
         download("http://www.bbc.co.uk/worldservice/learningenglish/language/askaboutenglish/",
                 "Ask about English",
                 path);
-        download("http://www.bbc.co.uk/worldservice/learningenglish/language/howto/",
-                "How to...",
-                path);
         download("http://www.bbc.co.uk/worldservice/learningenglish/language/uptodate/",
                 "Keep your English up to date",
                 path);
