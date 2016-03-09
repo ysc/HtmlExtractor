@@ -36,7 +36,43 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BBC {
     private static int count = 0;
     public static void main(String[] args) {
-        String path = "/Users/apple/百度云同步盘/BBC/";
+        String path = "/Users/ysc/百度云同步盘/BBC/";
+
+        //***
+        //Courses
+        //***
+        download("lower-intermediate", 30, path);
+        download("intermediate", 30, path);
+        download("upper-intermediate", 30, path);
+        download("shakespeare", 30, path);
+        download("emw", 17, path);
+
+        //***
+        //Features
+        //***
+        download("http://www.bbc.co.uk/learningenglish/english/features/news-report",
+                "News Report",
+                path);
+        download("http://www.bbc.co.uk/learningenglish/english/features/the-english-we-speak",
+                "The English We Speak",
+                path);
+        download("http://www.bbc.co.uk/learningenglish/english/features/lingohack",
+                "Lingohack",
+                path);
+        download("http://www.bbc.co.uk/learningenglish/english/features/6-minute-english",
+                "6 Minute English",
+                path);
+        download("http://www.bbc.co.uk/worldservice/learningenglish/grammar/pron/sounds/",
+                "The sounds of English",
+                path,
+                true,
+                true);
+        download("http://www.bbc.co.uk/learningenglish/english/features/drama",
+                "Dramas from BBC Learning English",
+                path);
+        download("http://www.bbc.co.uk/learningenglish/english/features/witn",
+                "Words in the News",
+                path);
 
         //***
         //archived version
@@ -96,40 +132,6 @@ public class BBC {
         download("http://www.bbc.co.uk/worldservice/learningenglish/specials/",
                 "Specials",
                 path);
-
-        //***
-        //Features
-        //***
-        download("http://www.bbc.co.uk/learningenglish/english/features/news-report",
-                "News Report",
-                path);
-        download("http://www.bbc.co.uk/learningenglish/english/features/the-english-we-speak",
-                "The English We Speak",
-                path);
-        download("http://www.bbc.co.uk/learningenglish/english/features/lingohack",
-                "Lingohack",
-                path);
-        download("http://www.bbc.co.uk/learningenglish/english/features/6-minute-english",
-                "6 Minute English",
-                path);
-        download("http://www.bbc.co.uk/worldservice/learningenglish/grammar/pron/sounds/",
-                "The sounds of English",
-                path,
-                true,
-                true);
-        download("http://www.bbc.co.uk/learningenglish/english/features/drama",
-                "Dramas from BBC Learning English",
-                path);
-        download("http://www.bbc.co.uk/learningenglish/english/features/witn",
-                "Words in the News",
-                path);
-
-        //***
-        //Courses
-        //***
-        download("lower-intermediate", 30, path);
-        download("intermediate", 30, path);
-        download("emw", 15, path);
 
         System.out.println("total file count: " + count);
     }
@@ -286,8 +288,9 @@ public class BBC {
         AtomicInteger i = new AtomicInteger(1);
         count += hrefs.size();
         hrefs.stream().sorted().forEach(href -> {
+            int times=0;
             boolean success = false;
-            while (!success) {
+            while (!success && (times++) < 3) {
                 try {
                     //提取文件名称
                     String[] attr = href.split("/");
