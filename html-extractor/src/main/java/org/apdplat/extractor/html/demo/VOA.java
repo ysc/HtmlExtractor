@@ -28,7 +28,9 @@ import org.jsoup.nodes.Element;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -118,8 +120,8 @@ public class VOA {
     public static Set<String> download(String sources, String target) throws Exception{
         Set<String> set = new HashSet<>();
         AtomicInteger i = new AtomicInteger();
-        Files.readAllLines(Paths.get(sources))
-                .parallelStream()
+        List<String> lines = Files.readAllLines(Paths.get(sources));
+        lines.parallelStream()
                 .forEach(line->{
                     String[] attr = line.trim().split("=");
                     String url = attr[0];
@@ -136,7 +138,7 @@ public class VOA {
                             }
                             if(StringUtils.isBlank(href)){
                                 System.err.println(i.incrementAndGet() + ". not find resource, name: " + name + ", url: " + url);
-                                set.add(name+" "+url);
+                                set.add(line);
                                 return;
                             }
                             System.out.println(i.incrementAndGet() + ". download resource, name: " + name + ", url: " + href);
@@ -148,6 +150,13 @@ public class VOA {
                         }
                     }
                 });
+        StringBuilder index = new StringBuilder();
+        AtomicInteger k = new AtomicInteger();
+        lines.forEach(line->index.append(k.incrementAndGet()).append(". <a target=\"_blank\" href=\"").append(line.trim().split("=")[0]).append("\">").append(line.trim().split("=")[1]).append("</a><br/>\n"));
+        index.append("<br/><br/>can't be downloaded resources:<br/>");
+        k.set(0);
+        set.forEach(line->index.append(k.incrementAndGet()).append(". <a target=\"_blank\" href=\"").append(line.trim().split("=")[0]).append("\">").append(line.trim().split("=")[1]).append("</a><br/>\n"));
+        Files.write(Paths.get(target+"/index.html"), Arrays.asList(index.toString().split("\n")));
         return set;
     }
 
