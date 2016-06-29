@@ -58,6 +58,61 @@ public class VOA {
 
         i.set(0);
         download(sourceDir+"PeopleInAmerica.txt", targetDir+"People In America").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+
+
+        i.set(0);
+        download(sourceDir+"Let'sLearnEnglish.txt", targetDir+"Let's Learn English").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+
+
+        i.set(0);
+        download(sourceDir+"What'sTrendingToday.txt", targetDir+"What's Trending Today").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"WordsandTheirStories.txt", targetDir+"Words and Their Stories").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+
+
+        i.set(0);
+        download(sourceDir+"PersonalTechnology.txt", targetDir+"Personal Technology").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"ScienceintheNews.txt", targetDir+"Science in the News").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"TheMakingofaNation.txt", targetDir+"The Making of a Nation").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"ThisIsAmerica.txt", targetDir+"This Is America").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+
+
+        i.set(0);
+        download(sourceDir+"Education.txt", targetDir+"Education").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"EverydayGrammar.txt", targetDir+"Everyday Grammar").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"HealthLifestyle.txt", targetDir+"Health & Lifestyle").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"IntheNews.txt", targetDir+"In the News").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+
+
+        i.set(0);
+        download(sourceDir+"America'sNationalParks.txt", targetDir+"America's National Parks").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"AmericanMosaic.txt", targetDir+"American Mosaic").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"AmericanStories.txt", targetDir+"American Stories").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"AsItIs.txt", targetDir+"As It Is").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
     }
 
     public static Set<String> download(String sources, String target) throws Exception{
@@ -77,12 +132,16 @@ public class VOA {
                             String html = fetcher.fetch(url);
                             String href = findMp4(html);
                             if(StringUtils.isBlank(href)){
+                                href = findMp3(html);
+                            }
+                            if(StringUtils.isBlank(href)){
                                 System.err.println(i.incrementAndGet() + ". not find resource, name: " + name + ", url: " + url);
                                 set.add(name+" "+url);
                                 return;
                             }
                             System.out.println(i.incrementAndGet() + ". download resource, name: " + name + ", url: " + href);
-                            download(href, target, name + ".mp4");
+                            String type = href.contains(".mp4") ? ".mp4" : (href.contains(".mp3") ? ".mp3" : (href.contains(".wav") ? ".wav" : ".unknow") );
+                            download(href, target, name + type);
                             success = true;
                         } catch (Exception e) {
                             System.out.println(e.getMessage() + " retry...");
@@ -119,6 +178,32 @@ public class VOA {
             String href = a.attr("href");
             // 270P
             if (href.endsWith(".mp4?download=1")) {
+                return href;
+            }
+        }
+        return "";
+    }
+
+    private static String findMp3(String html){
+        Document document = Jsoup.parse(html);
+        for(Element a : document.select("a")){
+            String href = a.attr("href");
+            // 384 kbps
+            if (href.endsWith("_original.wav?download=1")) {
+                return href;
+            }
+        }
+        for(Element a : document.select("a")){
+            String href = a.attr("href");
+            // 128 kbps
+            if (href.endsWith("_hq.mp3?download=1")) {
+                return href;
+            }
+        }
+        for(Element a : document.select("a")){
+            String href = a.attr("href");
+            // 64 kbps
+            if (href.endsWith(".mp3?download=1")) {
                 return href;
             }
         }
