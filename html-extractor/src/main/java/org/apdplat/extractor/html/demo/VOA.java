@@ -38,13 +38,29 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class VOA {
     public static void main(String[] args) throws Exception{
+        String sourceDir = "/Users/ysc/workspace/HtmlExtractor/html-extractor/src/main/resources/";
+        String targetDir = "/Users/ysc/百度云同步盘/VOA/";
+
         AtomicInteger i = new AtomicInteger();
-        download("/Users/ysc/百度云同步盘/VOA/English in a Minute", "/Users/ysc/workspace/HtmlExtractor/html-extractor/src/main/resources/EnglishInAMinute.txt").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+        download(sourceDir+"EnglishInAMinute.txt", targetDir+"English in a Minute").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
         i.set(0);
-        download("/Users/ysc/百度云同步盘/VOA/English @ the Movies", "/Users/ysc/workspace/HtmlExtractor/html-extractor/src/main/resources/EnglishAtTheMovies.txt").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+        download(sourceDir+"EnglishAtTheMovies.txt", targetDir+"English @ the Movies").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"EverydayGrammarTV.txt", targetDir+"Everyday Grammar TV").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"LearningEnglishTV.txt", targetDir+"Learning English TV").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"NewsWords.txt", targetDir+"News Words").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+        i.set(0);
+        download(sourceDir+"PeopleInAmerica.txt", targetDir+"People In America").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
     }
 
-    public static Set<String> download(String target, String sources) throws Exception{
+    public static Set<String> download(String sources, String target) throws Exception{
         Set<String> set = new HashSet<>();
         AtomicInteger i = new AtomicInteger();
         Files.readAllLines(Paths.get(sources))
@@ -78,6 +94,13 @@ public class VOA {
 
     private static String findMp4(String html){
         Document document = Jsoup.parse(html);
+        for(Element a : document.select("a")){
+            String href = a.attr("href");
+            // 1080P
+            if (href.endsWith("_fullhq.mp4?download=1")) {
+                return href;
+            }
+        }
         for(Element a : document.select("a")){
             String href = a.attr("href");
             // 720P
