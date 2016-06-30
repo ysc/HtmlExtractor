@@ -47,6 +47,7 @@ public class JSoupHtmlFetcher implements HtmlFetcher {
             LOGGER.debug("url:"+url);
             String host = new URL(url).getHost();
             Connection conn = Jsoup.connect(url)
+                    .timeout(60000)
                     .header("Accept", ACCEPT)
                     .header("Accept-Encoding", ENCODING)
                     .header("Accept-Language", LANGUAGE)

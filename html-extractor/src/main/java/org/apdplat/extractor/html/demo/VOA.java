@@ -118,7 +118,7 @@ public class VOA {
     }
 
     public static Set<String> download(String sources, String target) throws Exception{
-        Set<String> set = new HashSet<>();
+        Set<String> unableDownload = new HashSet<>();
         AtomicInteger i = new AtomicInteger();
         List<String> lines = Files.readAllLines(Paths.get(sources));
         lines.parallelStream()
@@ -138,7 +138,7 @@ public class VOA {
                             }
                             if(StringUtils.isBlank(href)){
                                 System.err.println(i.incrementAndGet() + ". not find resource, name: " + name + ", url: " + url);
-                                set.add(line);
+                                unableDownload.add(line);
                                 return;
                             }
                             System.out.println(i.incrementAndGet() + ". download resource, name: " + name + ", url: " + href);
@@ -153,11 +153,13 @@ public class VOA {
         StringBuilder index = new StringBuilder();
         AtomicInteger k = new AtomicInteger();
         lines.forEach(line->index.append(k.incrementAndGet()).append(". <a target=\"_blank\" href=\"").append(line.trim().split("=")[0]).append("\">").append(line.trim().split("=")[1]).append("</a><br/>\n"));
-        index.append("<br/><br/>can't be downloaded resources:<br/>");
-        k.set(0);
-        set.forEach(line->index.append(k.incrementAndGet()).append(". <a target=\"_blank\" href=\"").append(line.trim().split("=")[0]).append("\">").append(line.trim().split("=")[1]).append("</a><br/>\n"));
+        if(!unableDownload.isEmpty()){
+            index.append("<br/><br/>The resources which can't be downloaded: <br/>");
+            k.set(0);
+            unableDownload.forEach(line->index.append(k.incrementAndGet()).append(". <a target=\"_blank\" href=\"").append(line.trim().split("=")[0]).append("\">").append(line.trim().split("=")[1]).append("</a><br/>\n"));
+        }
         Files.write(Paths.get(target+"/index.html"), Arrays.asList(index.toString().split("\n")));
-        return set;
+        return unableDownload;
     }
 
     private static String findMp4(String html){
