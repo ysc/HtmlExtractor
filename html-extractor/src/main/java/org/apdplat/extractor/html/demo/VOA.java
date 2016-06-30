@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class VOA {
     public static void main(String[] args) throws Exception{
-        String sourceDir = "/Users/ysc/workspace/HtmlExtractor/html-extractor/src/main/resources/";
+        String sourceDir = "/Users/ysc/workspace/HtmlExtractor/html-extractor/src/main/resources/voa/";
         String targetDir = "/Users/ysc/百度云同步盘/VOA/";
 
         AtomicInteger i = new AtomicInteger();
