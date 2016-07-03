@@ -44,6 +44,15 @@ public class VOA {
         String targetDir = "/Users/ysc/百度云同步盘/VOA/";
 
         AtomicInteger i = new AtomicInteger();
+
+
+
+        i.set(0);
+        download(sourceDir+"HowAmericaElects.txt", targetDir+"How America Elects").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
+
+
+
+        i.set(0);
         download(sourceDir+"EnglishInAMinute.txt", targetDir+"English in a Minute").stream().sorted().forEach(item->System.out.println(i.incrementAndGet()+". "+item));
 
         i.set(0);
