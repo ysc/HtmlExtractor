@@ -140,8 +140,8 @@
         <jackson.version>1.9.13</jackson.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <jcl-over-slf4j.version>1.6.4</jcl-over-slf4j.version>
-        <htmlunit.version>2.15</htmlunit.version>
-        <selenium.version>2.47.1</selenium.version>
+        <htmlunit.version>2.24</htmlunit.version>
+        <selenium.version>3.0.1</selenium.version>
     </properties>
 
     <dependencies>

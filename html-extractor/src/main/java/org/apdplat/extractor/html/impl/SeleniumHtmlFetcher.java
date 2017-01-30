@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
+ * 安装geckodriver:
+ * brew install geckodriver
+ *
  * 使用selenium执行JS动态渲染网页获取页面内容
  *
  * @author 杨尚川
@@ -53,5 +56,11 @@ public class SeleniumHtmlFetcher implements HtmlFetcher {
             LOGGER.error("获取URL："+url+"页面出错", e);
         }
         return "";
+    }
+
+    public static void main(String[] args) {
+        HtmlFetcher htmlFetcher = new SeleniumHtmlFetcher();
+        String html = htmlFetcher.fetch("http://apdplat.org");
+        System.out.println(html);
     }
 }

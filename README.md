@@ -5,6 +5,9 @@
 ##[捐赠致谢](https://github.com/ysc/QuestionAnsweringSystem/wiki/donation)
 
 ##如何使用？
+    
+    使用SeleniumHtmlFetcher需要安装geckodriver:
+    brew install geckodriver
 
     HtmlExtractor由2个子项目构成，html-extractor和html-extractor-web。
     html-extractor实现了数据抽取逻辑，是从节点，html-extractor-web提供web界面来维护抽取规则，是主节点。

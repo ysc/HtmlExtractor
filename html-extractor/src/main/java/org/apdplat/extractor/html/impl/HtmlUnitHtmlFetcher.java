@@ -56,4 +56,10 @@ public class HtmlUnitHtmlFetcher implements HtmlFetcher {
         }
         return "";
     }
+
+    public static void main(String[] args) {
+        HtmlFetcher htmlFetcher = new HtmlUnitHtmlFetcher();
+        String html = htmlFetcher.fetch("http://apdplat.org");
+        System.out.println(html);
+    }
 }

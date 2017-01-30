@@ -64,4 +64,10 @@ public class JSoupHtmlFetcher implements HtmlFetcher {
         }
         return "";
     }
+
+    public static void main(String[] args) {
+        HtmlFetcher htmlFetcher = new JSoupHtmlFetcher();
+        String html = htmlFetcher.fetch("http://apdplat.org");
+        System.out.println(html);
+    }
 }
