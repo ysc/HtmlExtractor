@@ -1,10 +1,10 @@
-##HtmlExtractor是一个Java实现的基于模板的网页结构化信息精准抽取组件，本身并不包含爬虫功能，但可被爬虫或其他程序调用以便更精准地对网页结构化信息进行抽取。
+## HtmlExtractor是一个Java实现的基于模板的网页结构化信息精准抽取组件，本身并不包含爬虫功能，但可被爬虫或其他程序调用以便更精准地对网页结构化信息进行抽取。
 
-##HtmlExtractor是为大规模分布式环境设计的，采用主从架构，主节点负责维护抽取规则，从节点向主节点请求抽取规则，当抽取规则发生变化，主节点主动通知从节点，从而能实现抽取规则变化之后的实时动态生效。
+## HtmlExtractor是为大规模分布式环境设计的，采用主从架构，主节点负责维护抽取规则，从节点向主节点请求抽取规则，当抽取规则发生变化，主节点主动通知从节点，从而能实现抽取规则变化之后的实时动态生效。
 
-##[捐赠致谢](https://github.com/ysc/QuestionAnsweringSystem/wiki/donation)
+## [捐赠致谢](https://github.com/ysc/QuestionAnsweringSystem/wiki/donation)
 
-##如何使用？
+## 如何使用？
     
     使用SeleniumHtmlFetcher需要安装驱动:
     FirefoxDriver: brew install geckodriver
@@ -27,7 +27,7 @@
          
 [如何使用HtmlExtractor实现基于模板的网页结构化信息精准抽取?](http://my.oschina.net/apdplat/blog/402149)
 
-##单机集中式使用方法：
+## 单机集中式使用方法：
 
     //1、构造抽取规则
     List<UrlPattern> urlPatterns = new ArrayList<>();
@@ -109,7 +109,7 @@
         System.out.println("\tkeywords = "+extractResult.getKeywords());
     }
 
-##多机分布式使用方法：
+## 多机分布式使用方法：
 
     1、运行主节点，负责维护抽取规则：
     方法一：在html-extractor-web目录下运行mvn jetty:run 。
